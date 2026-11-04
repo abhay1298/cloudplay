@@ -46,8 +46,13 @@ The only outbound request is `safeRequest`, used by `/api/resolve` to probe dire
 ### Secrets
 - `.env` is git-ignored. TeraBox credentials (when an adapter exists) must only be read server-side. Nothing secret is exposed through `NEXT_PUBLIC_*`.
 
+### Password login (`APP_PASSWORD`)
+- When `APP_PASSWORD` is set, middleware requires a session for every page and API route except `/login`, `/api/auth/login` and static assets (manifest, icons, service worker, offline page).
+- The session cookie is `HttpOnly`, `SameSite=Lax`, `Secure` over HTTPS, valid 1 year, and holds `HMAC-SHA256(APP_PASSWORD, "cloudplay-session-v1")`. Changing the password signs out every device. The password isn't stored anywhere else.
+- Password checks compare fixed-length HMACs in constant time. Login is rate-limited (burst 5, then 1 attempt per 20 s per client). Post-login redirects only allow same-site paths.
+
 ## Known gaps / production hardening checklist
-- No built-in authentication. Put the app behind a reverse proxy with auth (OAuth2 proxy, Cloudflare Access, basic auth over TLS).
+- Single shared password, no per-user accounts. For stronger protection, also put the app behind an identity-aware proxy (Cloudflare Access, oauth2-proxy).
 - Rate limits are per process and in memory. Use a shared store (Redis) for multi-instance deployments.
 - The CSP allows `https:` media and connect sources by design. Narrow it if you only use known hosts.
 - `node:sqlite` is marked experimental in Node 22. Pin your Node version.

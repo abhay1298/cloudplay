@@ -1,0 +1,18 @@
+# One-click deploy on Render: https://render.com/deploy?repo=https://github.com/abhay1298/cloudplay
+services:
+  - type: web
+    name: cloudplay
+    runtime: docker
+    plan: starter # a persistent disk requires a paid plan (~$7/month); see DEPLOY.md for a free option
+    healthCheckPath: /login
+    envVars:
+      - key: APP_PASSWORD
+        sync: false # Render asks you to type a password during setup
+      - key: TRUST_PROXY
+        value: "true"
+      - key: DATABASE_PATH
+        value: /data/cloudplay.db
+    disk:
+      name: cloudplay-data
+      mountPath: /data
+      sizeGB: 1

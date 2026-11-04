@@ -92,6 +92,7 @@ See [.env.example](.env.example).
 
 | Variable | Default | Purpose |
 |---|---|---|
+| `APP_PASSWORD` | empty | Password login for the whole app (set it whenever the server is online) |
 | `DATABASE_PATH` | `./data/cloudplay.db` | SQLite file |
 | `API_TOKEN` | empty | Optional bearer token for non-browser clients |
 | `TRUST_PROXY` | `false` | Trust `X-Forwarded-*` from your reverse proxy |
@@ -119,6 +120,8 @@ None required. The SQLite schema is created automatically on first start in `DAT
 No official API exists to integrate (as of 2026-11-04). Don't use third-party "Diskwala downloader" services; they aren't Diskwala and may violate its terms.
 
 ## Deployment
+
+**Quick path:** see **[DEPLOY.md](DEPLOY.md)**, which covers one-click Render deploy (`render.yaml` + `Dockerfile`), Docker on your own server, and connecting the iPhone app.
 
 CloudPlay is a **single-user** app with no login system. On any network-reachable host:
 

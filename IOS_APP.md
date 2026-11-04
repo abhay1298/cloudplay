@@ -2,7 +2,7 @@
 
 CloudPlay's iOS app is a native wrapper (Capacitor 8, WKWebView) around **your hosted CloudPlay server**. GitHub's Mac computers build it, so **you don't need a Mac**. You install it with **Sideloadly** or **AltStore** using a free Apple ID.
 
-> The app needs your CloudPlay server. The library, history and settings live there. Deploy the server first (README → Deployment) and make sure it's reachable over **https://** from your phone.
+> **Start with [DEPLOY.md](DEPLOY.md).** The app needs your CloudPlay server. The library, history and settings live there. Deploy the server first (README → Deployment) and make sure it's reachable over **https://** from your phone.
 
 ## Step 1: Build the .ipa on GitHub
 
@@ -46,6 +46,7 @@ The server address is built into the app. If it changes, run the workflow again.
 - Background audio and picture-in-picture for video.
 - The camera, microphone and photo-library permission prompts appear only if you pick "Take Video" or a library video in the file picker. Videos stay on the phone.
 - External links ("Open in TeraBox", "Open in Diskwala", "Open TeraBox") open in Safari or the provider's app.
+- If the server has `APP_PASSWORD` set, you sign in once and stay signed in for a year.
 - If the server can't be reached, a "Can't reach your CloudPlay server" screen with **Try again** appears.
 
 ## Status, honestly

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Loader2, Trash2 } from "lucide-react";
+import { Check, Loader2, LogOut, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { AppSettings } from "@/lib/database";
 import { api } from "@/lib/client";
@@ -9,6 +9,7 @@ import { Button, PageHeader, StatusPill } from "@/components/ui";
 import type { ProviderCapabilities, ProviderId } from "@/types/provider";
 
 interface Caps {
+  authEnabled: boolean;
   providers: Record<ProviderId, ProviderCapabilities>;
   automaticConversion: { available: boolean; reason: string; credentialsConfigured: boolean };
 }
@@ -144,6 +145,23 @@ export function SettingsView() {
           CloudPlay never stores passwords, cookies or provider tokens. Local files you play or fingerprint never leave your device.
         </p>
       </section>
+
+      {caps?.authEnabled && (
+        <section className="card mb-6 px-5">
+          <h2 className="pt-5 font-semibold">Account</h2>
+          <Row label="Sign out" hint="This device will need the password again.">
+            <Button
+              variant="secondary"
+              onClick={async () => {
+                await api("/api/auth/logout", { method: "POST" });
+                window.location.assign("/login");
+              }}
+            >
+              <LogOut className="size-4" /> Sign out
+            </Button>
+          </Row>
+        </section>
+      )}
 
       <section className="card px-5 pb-5">
         <h2 className="pt-5 font-semibold">Integrations</h2>

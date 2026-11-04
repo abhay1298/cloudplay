@@ -1,0 +1,12 @@
+node_modules
+.next
+data
+test-results
+playwright-report
+ios
+native-shell
+.git
+*.zip
+*.db*
+.env*
+!.env.example
