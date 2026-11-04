@@ -1,6 +1,7 @@
-import type { NextConfig } from "next";
-
-const nextConfig: NextConfig = {
+// Plain JavaScript on purpose: a .ts config needs TypeScript at runtime, which the
+// production image (dev dependencies pruned) does not have.
+/** @type {import("next").NextConfig} */
+const nextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   // Request bodies for API routes are small JSON; files never pass through the server.

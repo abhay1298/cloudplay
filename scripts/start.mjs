@@ -112,7 +112,7 @@ if (!fs.existsSync(installedStamp) || fs.statSync(lock).mtimeMs > fs.statSync(in
 }
 
 const buildId = path.join(root, ".next", "BUILD_ID");
-const sourceTime = Math.max(...["src", "public", "package-lock.json", "next.config.ts"].map((p) => newestMtime(path.join(root, p))));
+const sourceTime = Math.max(...["src", "public", "package-lock.json", "next.config.mjs"].map((p) => newestMtime(path.join(root, p))));
 if (!fs.existsSync(buildId) || sourceTime > fs.statSync(buildId).mtimeMs) {
   console.log("Building CloudPlay…");
   run(npm, ["run", "build"]);
