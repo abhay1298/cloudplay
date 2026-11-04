@@ -26,6 +26,7 @@ export async function middleware(req: NextRequest) {
   const dev = process.env.NODE_ENV !== "production";
   const https = req.nextUrl.protocol === "https:" || req.headers.get("x-forwarded-proto") === "https";
   const httpMedia = process.env.ALLOW_HTTP_MEDIA === "true" ? " http:" : "";
+  const frameAncestors = process.env.FRAME_ANCESTORS?.replace(/[;,\r\n]/g, " ").trim() || "'none'";
 
   const csp = [
     "default-src 'self'",
@@ -39,7 +40,8 @@ export async function middleware(req: NextRequest) {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    // Default: never embeddable (clickjacking protection). FRAME_ANCESTORS can allow specific embedders.
+    `frame-ancestors ${frameAncestors}`,
     ...(https ? ["upgrade-insecure-requests"] : []),
   ].join("; ");
 
@@ -50,7 +52,7 @@ export async function middleware(req: NextRequest) {
   const res = NextResponse.next({ request: { headers: requestHeaders } });
   res.headers.set("content-security-policy", csp);
   res.headers.set("x-content-type-options", "nosniff");
-  res.headers.set("x-frame-options", "DENY");
+  if (frameAncestors === "'none'") res.headers.set("x-frame-options", "DENY");
   res.headers.set("referrer-policy", "no-referrer");
   res.headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=()");
   res.headers.set("cross-origin-opener-policy", "same-origin");

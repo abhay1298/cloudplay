@@ -29,7 +29,7 @@ The only outbound request is `safeRequest`, used by `/api/resolve` to probe dire
 
 ### HTTP security headers (`src/middleware.ts`)
 - Per-request **nonce-based CSP** with `strict-dynamic`, `object-src 'none'`, `frame-ancestors 'none'`, `base-uri 'self'` and `form-action 'self'`. `media-src`, `connect-src` and `img-src` allow `https:` because users stream direct media **in their own browser**. `wasm-unsafe-eval` is needed for the in-browser SHA-256 (hash-wasm).
-- `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: no-referrer`, a restrictive `Permissions-Policy`, and `COOP: same-origin`.
+- `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` (unless `FRAME_ANCESTORS` is set to allow specific embedders), `Referrer-Policy: no-referrer`, a restrictive `Permissions-Policy`, and `COOP: same-origin`.
 - When served over HTTPS: `Strict-Transport-Security` and `upgrade-insecure-requests`.
 - External links use `rel="noopener noreferrer nofollow"`.
 
