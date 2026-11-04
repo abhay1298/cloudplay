@@ -1,0 +1,107 @@
+# Builds an UNSIGNED CloudPlay .ipa on GitHub's macOS runners (no Mac needed).
+# Install it on your iPhone with Sideloadly or AltStore, which sign it with your own Apple ID.
+#
+# Run it: GitHub → Actions → "Build iOS app (.ipa)" → Run workflow → enter your server URL.
+name: Build iOS app (.ipa)
+
+on:
+  workflow_dispatch:
+    inputs:
+      server_url:
+        description: "Your CloudPlay server address (must start with https://)"
+        required: true
+        type: string
+      version:
+        description: "App version shown on the phone (e.g. 1.0.0)"
+        required: true
+        default: "1.0.0"
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-ipa
+  cancel-in-progress: true
+
+jobs:
+  build-ipa:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate inputs
+        env:
+          SERVER_URL: ${{ inputs.server_url }}
+          APP_VERSION: ${{ inputs.version }}
+        run: |
+          if ! [[ "$SERVER_URL" =~ ^https://[A-Za-z0-9.-]+(:[0-9]+)?(/.*)?$ ]]; then
+            echo "::error::server_url must be an https:// address, got: $SERVER_URL"; exit 1
+          fi
+          if ! [[ "$APP_VERSION" =~ ^[0-9]+(\.[0-9]+){0,2}$ ]]; then
+            echo "::error::version must look like 1.0.0, got: $APP_VERSION"; exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Configure native app for your server
+        env:
+          CLOUDPLAY_SERVER_URL: ${{ inputs.server_url }}
+        run: npx cap sync ios
+
+      - name: Show Xcode version and schemes
+        run: |
+          xcodebuild -version
+          xcodebuild -list -project ios/App/App.xcodeproj
+
+      - name: Build app (unsigned)
+        env:
+          APP_VERSION: ${{ inputs.version }}
+          BUILD_NUMBER: ${{ github.run_number }}
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            MARKETING_VERSION="$APP_VERSION" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build | tee xcodebuild.log | grep -E "error:|warning: .*deprecated|BUILD (SUCCEEDED|FAILED)" || true
+          test -d build/Build/Products/Release-iphoneos/App.app || { echo "::error::Build failed, see xcodebuild.log artifact"; exit 1; }
+
+      - name: Package .ipa
+        env:
+          APP_VERSION: ${{ inputs.version }}
+        run: |
+          rm -rf Payload && mkdir Payload
+          cp -R build/Build/Products/Release-iphoneos/App.app Payload/
+          zip -qry "CloudPlay-$APP_VERSION.ipa" Payload
+          ls -lh *.ipa
+
+      - name: Upload .ipa
+        uses: actions/upload-artifact@v4
+        with:
+          name: CloudPlay-ios-${{ inputs.version }}-build${{ github.run_number }}
+          path: CloudPlay-*.ipa
+          retention-days: 30
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: xcodebuild.log
+          retention-days: 7

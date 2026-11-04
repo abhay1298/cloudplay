@@ -1,0 +1,167 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+:root {
+  --bg: #07070d;
+  --bg-elev: #0f0f1a;
+  --surface: #151525;
+  --surface-2: #1c1c30;
+  --border: #26263d;
+  --text: #ececf6;
+  --text-muted: #9a9ab5;
+  --accent: #8b5cf6;
+  --accent-2: #3b82f6;
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #f87171;
+  --ring: #a78bfa;
+  color-scheme: dark;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f6f6fb;
+    --bg-elev: #ffffff;
+    --surface: #ffffff;
+    --surface-2: #f0f0f7;
+    --border: #e1e1ec;
+    --text: #15152a;
+    --text-muted: #5d5d78;
+    --accent: #7c3aed;
+    --accent-2: #2563eb;
+    --success: #059669;
+    --warning: #b45309;
+    --danger: #dc2626;
+    --ring: #7c3aed;
+    color-scheme: light;
+  }
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f6fb;
+  --bg-elev: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f0f0f7;
+  --border: #e1e1ec;
+  --text: #15152a;
+  --text-muted: #5d5d78;
+  --accent: #7c3aed;
+  --accent-2: #2563eb;
+  --success: #059669;
+  --warning: #b45309;
+  --danger: #dc2626;
+  --ring: #7c3aed;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-elev: var(--bg-elev);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--border);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.brand-gradient {
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+.brand-text {
+  background-image: linear-gradient(135deg, #c4b5fd, #93c5fd);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+:root[data-theme="light"] .brand-text {
+  background-image: linear-gradient(135deg, #7c3aed, #2563eb);
+}
+
+.hero-glow {
+  background:
+    radial-gradient(60% 80% at 15% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    radial-gradient(50% 70% at 90% 10%, color-mix(in srgb, var(--accent-2) 18%, transparent), transparent 70%);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+
+/* Video range inputs */
+input[type="range"].cp-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 1rem;
+  cursor: pointer;
+}
+input[type="range"].cp-range::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--accent) var(--fill, 0%), rgba(255, 255, 255, 0.35) var(--buffer-start, var(--fill, 0%)), rgba(255, 255, 255, 0.35) var(--buffer, 0%), rgba(255, 255, 255, 0.18) var(--buffer, 0%));
+}
+input[type="range"].cp-range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+}
+input[type="range"].cp-range::-moz-range-progress {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+input[type="range"].cp-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+input[type="range"].cp-range::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+video::cue {
+  background: rgba(0, 0, 0, 0.7);
+  font-size: 1.05em;
+}
