@@ -329,11 +329,27 @@ export function clientKey(req: Request): string {
  * cross-site POST/PUT/PATCH/DELETE, so require it to match the Host. Non-browser
  * clients may instead present API_TOKEN as a bearer token (if configured).
  */
+/** Origin of PUBLIC_URL (e.g. "https://my-pc.tail1234.ts.net"), or null if unset/invalid. */
+export function publicUrlOrigin(): string | null {
+  const raw = process.env.PUBLIC_URL?.trim();
+  if (!raw) return null;
+  try {
+    const u = new URL(raw);
+    return u.protocol === "https:" || u.protocol === "http:" ? u.origin : null;
+  } catch {
+    return null;
+  }
+}
+
 export function checkSameOrigin(req: Request): boolean {
   const token = process.env.API_TOKEN;
   const auth = req.headers.get("authorization");
   if (token && auth === `Bearer ${token}`) return true;
   const origin = req.headers.get("origin");
+  // PUBLIC_URL: the address users actually open (e.g. a Tailscale https://….ts.net name) when a
+  // local proxy forwards requests with Host: localhost.
+  const publicOrigin = publicUrlOrigin();
+  if (origin && publicOrigin && origin === publicOrigin) return true;
   const host = req.headers.get("x-forwarded-host") && process.env.TRUST_PROXY === "true"
     ? req.headers.get("x-forwarded-host")
     : req.headers.get("host");

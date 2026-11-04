@@ -16,7 +16,16 @@ export async function middleware(req: NextRequest) {
     const trust = process.env.TRUST_PROXY === "true";
     const host = (trust && req.headers.get("x-forwarded-host")) || req.headers.get("host") || req.nextUrl.host;
     const proto = (trust && req.headers.get("x-forwarded-proto")?.split(",")[0].trim()) || req.nextUrl.protocol.replace(":", "");
-    const login = new URL(`${proto}://${host}/login`);
+    const publicUrl = process.env.PUBLIC_URL?.trim();
+    let base = `${proto}://${host}`;
+    if (publicUrl) {
+      try {
+        base = new URL(publicUrl).origin;
+      } catch {
+        /* ignore invalid PUBLIC_URL */
+      }
+    }
+    const login = new URL(`${base}/login`);
     const next = req.nextUrl.pathname + req.nextUrl.search;
     if (next !== "/") login.searchParams.set("next", next);
     return NextResponse.redirect(login, { headers: { "cache-control": "no-store" } });

@@ -70,3 +70,26 @@ describe("middleware gate", () => {
     expect((await middleware(req("/api/library", "cp_session=forged"))).status).toBe(401);
   });
 });
+
+describe("PUBLIC_URL (own computer behind Tailscale or another local proxy)", () => {
+  afterEach(() => {
+    delete process.env.PUBLIC_URL;
+  });
+
+  it("login redirects go to the public address even when Host is localhost", async () => {
+    process.env.APP_PASSWORD = "pw";
+    process.env.PUBLIC_URL = "https://my-pc.tail1234.ts.net/";
+    const res = await middleware(new NextRequest("http://localhost:3000/library", { headers: { host: "localhost:3000" } }));
+    expect(res.headers.get("location")).toBe("https://my-pc.tail1234.ts.net/login?next=%2Flibrary");
+  });
+
+  it("CSRF check accepts the public origin and still rejects others", async () => {
+    const { checkSameOrigin } = await import("@/lib/security");
+    process.env.PUBLIC_URL = "https://my-pc.tail1234.ts.net";
+    const mk = (origin: string) =>
+      new Request("http://localhost:3000/api/library", { method: "POST", headers: { host: "localhost:3000", origin } });
+    expect(checkSameOrigin(mk("https://my-pc.tail1234.ts.net"))).toBe(true);
+    expect(checkSameOrigin(mk("https://evil.example"))).toBe(false);
+    expect(checkSameOrigin(mk("https://my-pc.tail1234.ts.net.evil.example"))).toBe(false);
+  });
+});

@@ -2,6 +2,10 @@
 
 The iPhone app, and the Home Screen version, are windows onto **your CloudPlay server**. If no server is online, the app shows "Can't reach your CloudPlay server". Follow these steps once.
 
+## Option 0: Your own computer (free, recommended if a PC can stay on)
+
+See **[LOCAL_SERVER.md](LOCAL_SERVER.md)**.
+
 ## Option 1: Render (recommended, about 10 minutes)
 
 Render runs the included `Dockerfile` and gives you an `https://` address automatically.

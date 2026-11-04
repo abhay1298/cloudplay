@@ -92,6 +92,7 @@ See [.env.example](.env.example).
 
 | Variable | Default | Purpose |
 |---|---|---|
+| `PUBLIC_URL` | empty | Public address when behind a local proxy such as Tailscale serve |
 | `APP_PASSWORD` | empty | Password login for the whole app (set it whenever the server is online) |
 | `DATABASE_PATH` | `./data/cloudplay.db` | SQLite file |
 | `API_TOKEN` | empty | Optional bearer token for non-browser clients |
@@ -121,7 +122,9 @@ No official API exists to integrate (as of 2026-11-04). Don't use third-party "D
 
 ## Deployment
 
-**Quick path:** see **[DEPLOY.md](DEPLOY.md)**, which covers one-click Render deploy (`render.yaml` + `Dockerfile`), Docker on your own server, and connecting the iPhone app.
+**Free on your own computer:** see **[LOCAL_SERVER.md](LOCAL_SERVER.md)**: double-click start scripts plus Tailscale for iPhone access.
+
+**Hosted:** see **[DEPLOY.md](DEPLOY.md)**, which covers one-click Render deploy (`render.yaml` + `Dockerfile`), Docker on your own server, and connecting the iPhone app.
 
 CloudPlay is a **single-user** app with no login system. On any network-reachable host:
 
