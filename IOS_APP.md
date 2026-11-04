@@ -6,6 +6,10 @@ CloudPlay's iOS app is a native wrapper (Capacitor 8, WKWebView) around **your h
 
 ## Step 1: Build the .ipa on GitHub
 
+**Automatic:** put your server address in `native-config/server-url.txt` and commit it, or send it to Claude. GitHub then builds the app by itself and publishes `CloudPlay-1.0.0.ipa` on the repository's **Releases** page: https://github.com/abhay1298/cloudplay/releases
+
+**Manual alternative:**
+
 1. Push this project to a GitHub repository.
 2. On GitHub, open the repository, then **Actions → Build iOS app (.ipa) → Run workflow**.
 3. Enter:

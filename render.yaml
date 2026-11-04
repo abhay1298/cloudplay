@@ -1,9 +1,12 @@
 # One-click deploy on Render: https://render.com/deploy?repo=https://github.com/abhay1298/cloudplay
+# Uses Render's FREE plan (no credit card). Limits: sleeps after 15 min idle (~1 min to wake),
+# and the SQLite library/history resets whenever it sleeps or redeploys (no persistent disk on Free).
+# To keep data: switch to a paid plan and add a disk mounted at /data (see DEPLOY.md).
 services:
   - type: web
     name: cloudplay
     runtime: docker
-    plan: starter # a persistent disk requires a paid plan (~$7/month); see DEPLOY.md for a free option
+    plan: free
     healthCheckPath: /login
     envVars:
       - key: APP_PASSWORD
@@ -12,7 +15,3 @@ services:
         value: "true"
       - key: DATABASE_PATH
         value: /data/cloudplay.db
-    disk:
-      name: cloudplay-data
-      mountPath: /data
-      sizeGB: 1

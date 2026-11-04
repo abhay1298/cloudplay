@@ -15,8 +15,11 @@ Render runs the included `Dockerfile` and gives you an `https://` address automa
 5. When it says **Live**, copy your address from the top of the service page, e.g. `https://cloudplay-abcd.onrender.com`.
 6. Open that address in a browser and sign in with your password to check that it works.
 
-**Cost:** `render.yaml` uses the **Starter** plan with a 1 GB disk (about $7/month), so your library and history survive restarts.
-**Free test option:** in Render, switch the plan to **Free** and delete the disk. It works, but free servers **sleep after 15 minutes** (the first open takes about 1 minute) and **lose all saved data** when they restart. Fine for trying it out, not for daily use.
+**Cost: free.** `render.yaml` uses Render's **Free** plan, and no credit card is needed. Limits of the free plan:
+- It **sleeps after 15 minutes** without use. The next open takes about 1 minute; the app's "Try again" button handles it.
+- **Saved library and history reset** when it sleeps or redeploys (there's no permanent disk on Free). Playback, conversion checks and the manual-transfer tools still work.
+
+**To keep your data permanently (optional, paid):** in Render, change the plan to Starter (about $7/month) and add a **Disk** with mount path `/data`.
 
 ## Option 2: Your own server or VPS (Docker)
 
